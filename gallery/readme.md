@@ -9,3 +9,5 @@
 > yo --version
 >
 > npm install -g generator-react-webpack
+>
+> npm start
