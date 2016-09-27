@@ -18,6 +18,17 @@ imageData = (function genImageURL(imageData){
 	return imageData;
 })(imageData);
 
+function getRangeRandom(low, high){
+	return Math.floor(Math.random()*(high - low) + low);
+}
+
+/*
+ * 获取0-30之间的任意正负值
+ */
+function get30DegRandow(){
+	return (Math.random() > 0.5 ? '':'-') + Math.floor(Math.random() * 30);
+}
+
 var ImgFigure = React.createClass({
 	/*
 	 * imgFigure的点击处理函数
@@ -39,8 +50,8 @@ var ImgFigure = React.createClass({
 		}
 		//rotate
 		if(this.props.arrange.rotate){
-			(['MozT', 'MsT', 'WebkitT', 't']).forEach(function(v){
-				styleObj[v + 'ransform'] = 'rotate(' + this.props.arrange.rotate + 'deg)';
+			(['MozTransform', 'msTransform', 'WebkitTransform', 'transform']).forEach(function(v){
+				styleObj[v] = 'rotate(' + this.props.arrange.rotate + 'deg)';
 			}.bind(this));
 		}
 
@@ -66,16 +77,29 @@ var ImgFigure = React.createClass({
 	}
 });
 
-function getRangeRandom(low, high){
-	return Math.floor(Math.random()*(high - low) + low);
-}
-
-/*
- * 获取0-30之间的任意正负值
- */
-function get30DegRandow(){
-	return (Math.random() > 0.5 ? '':'-') + Math.ceil(Math.random() * 30);
-}
+var ControllerUnits = React.createClass({
+	handleClick:function(e){
+		if(this.props.arrange.isCenter){
+			this.props.inverse();
+		}else{
+			this.props.center();
+		}
+		e.preventDefault();
+		e.stopPropagation();
+	},
+	render:function(){
+		var controllerUnitClassName = 'controller-unit';
+		if(this.props.arrange.isCenter){
+			controllerUnitClassName += ' is-center';
+			if(this.props.arrange.isInverse){
+				controllerUnitClassName += ' is-inverse';
+			}
+		}
+		return (
+		<span className={controllerUnitClassName} onClick={this.handleClick}></span>
+		)
+	}
+});
 
 var AppComponent = React.createClass ({
 	getInitialState:function(){
@@ -246,6 +270,7 @@ var AppComponent = React.createClass ({
   			}
   		}
   		imgFigures.push(<ImgFigure key={index} data={v} ref={'imgFigure' + index} center={this.center(index)} inverse={this.inverse(index)} arrange={this.state.imgsArrangeArr[index]}/>);
+  		controllerUnits.push(<ControllerUnits key={index} center={this.center(index)} inverse={this.inverse(index)} arrange={this.state.imgsArrangeArr[index]}/>);
   	}.bind(this));
 
     return (
